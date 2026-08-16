@@ -1,43 +1,48 @@
-# 🧠 CogniStream
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=220&section=header&text=CogniStream&fontSize=50&fontColor=ffffff&fontAlignY=38&desc=Developer%20Flow-State%20&%20Cognitive%20Load%20Analytics&descSize=18&descAlignY=62" width="100%"/>
+</div>
 
-> **Developer Flow-State & Cognitive Load Analytics**  
-> *Real-time telemetry, context-switch tracking, and mental bandwidth optimization for modern engineering teams.*
+<h3 align="center">
+  🚀 <em>Measure Focus, Not Just Commits. Transform Engineering Experience with Telemetry-Driven Analytics.</em>
+</h3>
 
----
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](#)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
-[![Node.js 18+](https://img.shields.io/badge/node-18+-green.svg)](https://nodejs.org/)
-
----
-
-## 📌 Overview
-
-**CogniStream** is an open-source Developer Experience (DevEx) telemetry engine that measures, visualizes, and protects developer flow-state. 
-
-Rather than relying on vanity productivity metrics (like line counts or commit frequency), CogniStream tracks **cognitive friction, context-switching frequency, and deep-work duration** across IDEs, communication tools (Slack/Teams), git workflows, and system events.
-
-By combining passive IDE telemetry with light friction modeling, CogniStream gives engineers actionable insights to defend focus time and helps team leads eliminate structural productivity bottlenecks.
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Production%20Ready-success?style=for-the-badge&logo=git&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Database-SQL%20(%20PostgreSQL%20)-blue?style=for-the-badge&logo=postgresql&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Visualization-Power%20BI-yellow?style=for-the-badge&logo=powerbi&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Telemetry-158k%2B%20Events-orange?style=for-the-badge&logo=databricks&logoColor=white"/>
+</p>
 
 ---
 
-## ✨ Key Features
+## ⚡ 1. The Core Problem & Business Use Case
 
-* **⚡ Real-Time Flow-State Detection**
-  * Tracks uninterrupted active coding intervals, focus density, and typing cadences to calculate live Flow Scores (0–100%).
-* **🔄 Context-Switch & Friction Analytics**
-  * Pinpoints high-friction events like rapid tab-swapping, notification fatigue, sudden meetings, and frequent AI-agent re-prompting/review cycles.
-* **🛡️ Privacy-First Architecture**
-  * All granular keystrokes, diffs, and window titles are processed locally via on-device differential privacy. Only aggregated, anonymized metrics leave your local machine.
-* **💬 Slack & MS Teams Integration**
-  * Automatically sets "In Flow" status on Slack/Teams and pauses non-urgent notifications when deep work thresholds are achieved.
-* **📊 DevEx Dashboard & CLI**
-  * Rich web dashboard built with Next.js/Tailwind for team trends, plus a fast Terminal UI (TUI) for individual developers.
-* **🔌 IDE Plugins (VS Code & JetBrains)**
-  * Lightweight extensions to track editor focus, debugging loops, and terminal usage without slowing down your workflow.
+Traditional engineering productivity metrics like **"lines of code written"** or **"tickets closed"** are fundamentally flawed. They measure raw output volume while completely ignoring the **friction of the development workflow**[cite: 1].
+
+> **The CogniStream Scenario:** An Engineering Manager reviews the dashboard. Instead of checking how many commits Team A pushed, they inspect a **"Context-Switching Tax"** analysis[cite: 1]. The telemetry proves that Team A loses **40% of their peak cognitive flow state** due to poorly timed, automated CI/CD Slack alerts interrupting their IDE sessions—empowering leadership to adjust notification policies and reclaim developer focus[cite: 1].
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ 2. Enterprise Star Schema Architecture
+
+CogniStream relies on an optimized **Star Schema** partitioned into a two-tier fact structure for deep root-cause diagnostic queries and rapid executive rollup reporting[cite: 1]:
+
+```text
+                  +-------------------+
+                  |   dim_developer   |
+                  +---------+---------+
+                            |
+  +------------------+      | 1:N     +-------------------+
+  |     dim_date     +------|-------->+   fact_flow_daily  |
+  +--------+---------+      |         +-------------------+
+           |                |                   ^
+           | 1:N            | 1:N               | 1:N
+           v                v                   |
+  +--------+----------------+---------+         |
+  |     fact_developer_activity_log    +---------+
+  +--------+----------------+---------+
+           ^                ^
+           | 1:N            | 1:N
+  +--------+---------+   +--+-----------------+
+  | dim_activity_type|   |   dim_interruption  |
+  +------------------+   +--------------------+
