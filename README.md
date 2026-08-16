@@ -1,5 +1,36 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=220&section=header&text=CogniStream%20|%20Week%201&fontSize=42&fontColor=ffffff&fontAlignY=38&desc=Data%20Ingestion,%20SQL%20Staging%20&%20Power%20BI%20Scaffolding&descSize=16&descAlignY=62" width="100%"/>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=220&section=header&text=CogniStream%20Squad&fontSize=42&fontColor=ffffff&fontAlignY=38&desc=Engineering%20Productivity%20Analytics%20Team&descSize=16&descAlignY=62" width="100%"/>
+</div>
+
+<h3 align="center">
+  ⚡ <em>The Brilliant Minds Powering CogniStream</em>
+</h3>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Team-Core%20Contributors-success?style=for-the-badge&logo=git&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Project-CogniStream-blue?style=for-the-badge&logo=powerbi&logoColor=white"/>
+</p>
+
+---
+
+<div align="center">
+
+  ### 👥 Team Members
+
+  | Name | Role / Focus |
+  | :---: | :---: |
+  | **Mameeth C** | 👑 Project Lead & Data Architecture |
+  | **Aparna C** | 💻 ETL Pipeline & SQL Cleansing |
+  | **Malavika Nair** | 📊 DAX Analytics & Metric Modeling |
+  | **Lucky Aswal** | 🎨 Dashboard UX/UI & BI Lead |
+
+</div>
+
+---
+
+<div align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" width="100%"/>
+  <p>⭐ Built with precision by Team CogniStream ⭐</p>
 </div>
 
 <h3 align="center">
