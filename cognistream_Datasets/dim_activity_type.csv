@@ -1,0 +1,7 @@
+activity_id,activity_name,cognitive_category,is_deep_work
+1,Active IDE Coding & Refactoring,Deep Work,True
+2,Local Debugging & Profiling,Deep Work,True
+3,Code Review & PR Inspection,Focused Task,False
+4,Technical Documentation / RFC,Focused Task,False
+5,Scheduled Scrum / Sprint Sync,Collaborative / Meeting,False
+6,Triaging Slack & Notifications,Friction / Interruption,False

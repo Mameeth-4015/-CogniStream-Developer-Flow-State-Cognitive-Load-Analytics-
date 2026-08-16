@@ -1,0 +1,9 @@
+interruption_id,source_channel,interruption_category,urgency_tier,requires_action,avg_recovery_latency_min
+0,None (Continuous Focus),None,None,False,0.0
+1,Slack - Automated CI/CD Alert,Tooling & Automation,Informational,False,15.5
+2,Slack - Direct Message,Direct Communication,Medium,True,18.0
+3,Slack - @here / @channel,Broadcast Noise,Noise/Spam,False,12.0
+4,PagerDuty Incident Alert,Production Alert,Critical,True,26.5
+5,Unplanned Ad-Hoc Call / Huddle,Direct Communication,High,True,24.0
+6,Jira Notification Digest,Tooling & Automation,Noise/Spam,False,8.5
+7,GitHub PR Review Requested,Peer Collaboration,Medium,True,16.0
