@@ -1,0 +1,9 @@
+"interruption_id";"source_channel";"interruption_category";"urgency_tier";"requires_action";"avg_recovery_latency_min"
+0;"None (Continuous Focus)";"None";"None";0;0.0
+1;"Slack - Automated CI/CD Alert";"Tooling & Automation";"Informational";0;15.5
+2;"Slack - Direct Message";"Direct Communication";"Medium";1;18.0
+3;"Slack - @here / @channel";"Broadcast Noise";"Noise/Spam";0;12.0
+4;"PagerDuty Incident Alert";"Production Alert";"Critical";1;26.5
+5;"Unplanned Ad-Hoc Call / Huddle";"Direct Communication";"High";1;24.0
+6;"Jira Notification Digest";"Tooling & Automation";"Noise/Spam";0;8.5
+7;"GitHub PR Review Requested";"Peer Collaboration";"Medium";1;16.0
