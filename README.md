@@ -8,7 +8,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Team-Core%20Contributors-success?style=for-the-badge&logo=git&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Project-CogniStream-blue?style=for-the-badge&logo=powerbi&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Project-CogniStream-blue?style=for-the-badge&logo=tableau&logoColor=white"/>
 </p>
 
 ---
@@ -21,8 +21,8 @@
   | :---: | :---: |
   | **Mameeth C** | 👑 Project Lead & Data Architecture |
   | **Aparna C** | 💻 ETL Pipeline & SQL Cleansing |
-  | **Malavika Nair** | 📊 DAX Analytics & Metric Modeling |
-  | **Lucky Aswal** | 🎨 Dashboard UX/UI & BI Lead |
+  | **Malavika Nair** | 📊 Calculated Fields & Metric Modeling |
+  | **Lucky Aswal** | 🎨 Dashboard UX/UI & Tableau Lead |
 
 </div>
 
@@ -30,33 +30,33 @@
 </div>
 
 <h3 align="center">
-  🚀 <em>Phase 1 Status Report: Foundation, SQL Staging & Star Schema Scaffolding</em>
+  🚀 <em>End-to-End Project Report: Weeks 1 to 4 Complete Lifecycle</em>
 </h3>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Week-1%20Complete-success?style=for-the-badge&logo=git&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Status-Green%20(On%20Schedule)-blue?style=for-the-badge&logo=statuspage&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Records%20Staged-168k%2B%20Rows-orange?style=for-the-badge&logo=databricks&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Project-Complete-success?style=for-the-badge&logo=git&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Status-Green%20(Delivered)-blue?style=for-the-badge&logo=statuspage&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Viz-Tableau-orange?style=for-the-badge&logo=tableau&logoColor=white"/>
 </p>
 
 ---
 
-## 📅 Week 1 Overview & Objectives
+## 📅 Project Overview & 4-Week Roadmap
 
-During **Week 1**, the foundation for the **CogniStream** developer telemetry pipeline was established. We successfully ingested raw event logs, created unconstrained staging tables, completed exploratory profiling to identify data anomalies, and initialized our dimensional modeling and Power BI scaffolding.
+**CogniStream** is an engineering telemetry and productivity analytics platform designed to analyze developer workflow patterns, flow states, context-switching taxes, and cognitive recovery times. This document outlines the end-to-end execution across four sequential project phases utilizing SQL data staging, rigorous data cleansing, and Tableau data visualization.
 
-| Milestone / Focus Area | Status | Key Artifact / Action |
-| :--- | :---: | :--- |
-| **Raw Data Ingestion** | 🟢 Complete | Created unconstrained `stg_` tables for 158k+ activity logs & 150 developer profiles. |
-| **Data Profiling & Audit** | 🟢 Complete | Identified timeline inversions, duration outliers, and missing interruption foreign keys. |
-| **Star Schema Architecture** | 🟢 Complete | Designed a two-tier fact model linking 2 facts to 4 dimensions. |
-| **Power BI Initialization** | 🟢 Complete | Configured workspace theme, report structure, and single-direction $1:*$ relationships. |
+| Phase / Timeline | Focus Area | Status | Key Deliverable |
+| :--- | :--- | :---: | :--- |
+| **Week 1** | Ingestion & Schema Design | 🟢 Complete | Raw CSV ingestion, unconstrained staging tables, and star schema architecture. |
+| **Week 2** | Production SQL Cleansing | 🟢 Complete | Automated data cleansing, constraint enforcement, and clean production tables. |
+| **Week 3** | Tableau Metric Modeling | 🟢 Complete | Calculated fields, parameter controls, and advanced analytical calculations. |
+| **Week 4** | Dashboard UX & Deployment | 🟢 Complete | Executive UI design, interactive storyboards, UAT, and final handover. |
 
 ---
 
-## 🏗️ 1. SQL Staging & Data Ingestion Setup
+## 🏗️ Phase 1: Ingestion & Star Schema Scaffolding
 
-To prevent schema lockouts and import crashes during ingestion, raw CSV telemetry files were loaded into unconstrained staging tables:
+Raw telemetry logs and developer profile CSVs were ingested into an unconstrained SQL database to prevent import bottlenecks.
 
 ```sql
 -- 1. Staging Table: Granular Activity Logs (158,152 raw rows)
@@ -83,53 +83,69 @@ CREATE TABLE stg_developer (
     primary_ide TEXT,
     timezone TEXT
 );
-🔍 2. Data Profiling & Audit Insights
-We executed exploratory audit queries to uncover data hygiene issues before production transformation:
+
+Data Profiling Audits: Initial exploratory queries detected timeline inversions (timestamp_end < timestamp_start), polling duplicates, and null interruption codes.
+
+Star Schema Design: Structured a dimensional model linking granular fact tables (fact_developer_activity_log) to descriptive dimensions (dim_developer, dim_activity_type, dim_interruption, dim_date).
+
+🧹 Phase 2: Production SQL Cleansing & Transformation
+Production-grade SQL scripts were executed to clean anomalies, deduplicate polling entries, and establish strict referential integrity.
 
 SQL
--- Auditing missing IDs, invalid timestamps, and duration extremes
+
+-- Production Clean Table Generation with Constraints
+CREATE TABLE fact_developer_activity_log_clean AS
+WITH deduplicated_logs AS (
+    SELECT *,
+           ROW_NUMBER() OVER (PARTITION BY log_id ORDER BY timestamp_start) AS rn
+    FROM stg_developer_activity_log
+    WHERE timestamp_start IS NOT NULL 
+      AND timestamp_end IS NOT NULL
+      AND timestamp_end >= timestamp_start
+      AND session_duration_minutes::NUMERIC >= 0
+      AND session_duration_minutes::NUMERIC <= 480
+)
 SELECT 
-    COUNT(*) AS total_raw_rows,
-    SUM(CASE WHEN developer_id IS NULL OR TRIM(developer_id) = '' THEN 1 ELSE 0 END) AS missing_dev_ids,
-    SUM(CASE WHEN timestamp_start IS NULL OR TRIM(timestamp_start) = '' THEN 1 ELSE 0 END) AS missing_timestamps,
-    SUM(CASE WHEN session_duration_minutes::NUMERIC < 0 THEN 1 ELSE 0 END) AS negative_durations,
-    SUM(CASE WHEN session_duration_minutes::NUMERIC > 480 THEN 1 ELSE 0 END) AS excessive_durations
-FROM stg_developer_activity_log;
-🚨 Key Audit Findings & Remediation Plan:
-Timestamp Sequence Inversion: Found records where timestamp_end < timestamp_start.
+    log_id,
+    developer_id,
+    date_key,
+    timestamp_start::TIMESTAMP AS timestamp_start,
+    timestamp_end::TIMESTAMP AS timestamp_end,
+    activity_id,
+    COALESCE(NULLIF(TRIM(interruption_id), ''), '0')::INT AS interruption_id,
+    session_duration_minutes::NUMERIC AS session_duration_minutes,
+    in_flow_state::INT AS in_flow_state,
+    context_switch_flag::INT AS context_switch_flag,
+    cognitive_recovery_minutes::NUMERIC AS cognitive_recovery_minutes
+FROM deduplicated_logs
+WHERE rn = 1;
 
-Remediation: Added SQL filter WHERE timestamp_end >= timestamp_start.
+Orphan Pruning: Foreign keys pointing to inactive or deleted developer profiles were removed.
 
-Overlapping Telemetry Duplicates: Polling overlaps caused duplicate session rows.
+Type Casting: Converted unstructured text metrics into strict numeric and timestamp formats ready for Tableau connection.
 
-Remediation: Enforced deduplication using ROW_NUMBER() OVER (PARTITION BY log_id ORDER BY timestamp_start).
+// 1. Pure Flow Hours: Total hours spent specifically in an uninterrupted flow state
+SUM(IF [In Flow State] = 1 THEN [Session Duration Minutes] END) / 60
 
-Missing Interruption Codes: Null/empty interruption_id fields.
+// 2. Cognitive Recovery Tax (Hrs): Total hours lost due to post-interruption recovery phases
+SUM([Cognitive Recovery Minutes]) / 60
 
-Remediation: Used COALESCE(NULLIF(TRIM(interruption_id), ''), '0')::INT to map all nulls to key 0 (Continuous Focus / No Interruption).
+// 3. Context-Switching Tax %: Proportion of work time consumed by context fragmentation
+SUM(IF [Context Switch Flag] = 1 THEN [Session Duration Minutes] END) 
+/ 
+SUM([Session Duration Minutes])
 
-📐 3. Star Schema Architecture Design
-+-------------------+
-                  |   dim_developer   |
-                  +---------+---------+
-                            |
-  +------------------+      | 1:N     +-------------------+
-  |     dim_date     +------|-------->+   fact_flow_daily  |
-  +--------+---------+      |         +-------------------+
-           |                |                   ^
-           | 1:N            | 1:N               | 1:N
-           v                v                   |
-  +--------+----------------+---------+         |
-  |     fact_developer_activity_log    +---------+
-  +--------+----------------+---------+
-           ^                ^
-           | 1:N            | 1:N
-  +--------+---------+   +--+-----------------+
-  | dim_activity_type|   |   dim_interruption  |
-  +------------------+   +--------------------+
+Level of Detail (LOD) Expressions: Fixed LOD calculations were implemented to track individual developer baseline outputs against squad averages independent of filter context.
 
-🎯Week 2 Action PlanExecute Production Cleansing:
-# Run final SQL transformation scripts to generate fact_developer_activity_log_clean and dim_developer_clean.
-# Referential Integrity Enforcement: Prune orphan foreign keys and create primary/foreign key constraints.
-# DAX Implementation: Build core business measures (Pure Flow Hours, Cognitive Recovery Tax, Context-Switching Tax %).
-# Visual Prototyping: Build top-level Executive KPI cards and preliminary team comparison charts in Power BI[cite: 2].
+Parameters & Sets: Built interactive parameters allowing engineering leads to toggle dynamic threshold filtering for excessive session lengths and recovery time limits.
+
+🎨 Phase 4: Executive Tableau Dashboard UX & Deployment
+The final reporting interface was structured into a clean, high-impact multi-tab workbook optimized for engineering leadership and team managers:
+
+Executive Summary Dashboard: High-level KPI cards displaying Total Active Devs, Average Flow State Ratio, and Total Cognitive Recovery Tax across squads.
+
+Developer Deep-Dive View: Granular scatter plots mapping primary IDE performance against interruption frequencies and recovery overhead.
+
+Team Comparison Matrix: Comparative bar charts tracking output velocity and context-switching rates week-over-week.
+
+Deployment & Handover: Published data sources and workbooks to Tableau Cloud, establishing automated daily extract refreshes and workbook permissions.
